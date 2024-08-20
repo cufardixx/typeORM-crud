@@ -1,0 +1,94 @@
+comandos iniciar proyecto 
+-npm init -y
+-npm i express  
+-npm i typescript -D
+-npx tsc --init      
+
+activar propiedades de typescript
+-"rootDir": "./src",  
+-"outDir": "./dist", 
+-npx tsc
+
+instalar modulo para auto compilar! simil nodemon
+-npm i ts-node-dev -D
+-"dev": "ts-node-dev --respawn src/index.ts" (crear script)
+
+-------------------------------TypeORM-------------------------------
+Install the npm package:
+
+npm install typeorm --save
+
+You need to install reflect-metadata shim:
+
+npm install reflect-metadata --save
+
+and import it somewhere in the global place of your app (for example in app.ts):
+
+import "reflect-metadata"
+
+You may need to install node typings:
+
+npm install @types/node --save-dev
+
+Install a database driver:
+
+for MySQL or MariaDB
+
+npm install mysql --save (you can install mysql2 instead as well)
+
+for PostgreSQL or CockroachDB
+
+npm install pg --save
+
+for SQLite
+
+npm install sqlite3 --save
+
+for Microsoft SQL Server
+
+npm install mssql --save
+
+for sql.js
+
+npm install sql.js --save
+
+for Oracle
+
+npm install oracledb --save
+
+To make the Oracle driver work, you need to follow the installation instructions from their site.
+
+for SAP Hana
+
+npm install @sap/hana-client
+npm install hdb-pool
+SAP Hana support made possible by the sponsorship of Neptune Software.
+
+for Google Cloud Spanner
+
+npm install @google-cloud/spanner --save
+Provide authentication credentials to your application code by setting the environment variable GOOGLE_APPLICATION_CREDENTIALS:
+
+# Linux/macOS
+export GOOGLE_APPLICATION_CREDENTIALS="KEY_PATH"
+
+# Windows
+set GOOGLE_APPLICATION_CREDENTIALS=KEY_PATH
+
+# Replace KEY_PATH with the path of the JSON file that contains your service account key.
+To use Spanner with the emulator you should set SPANNER_EMULATOR_HOST environment variable:
+
+# Linux/macOS
+export SPANNER_EMULATOR_HOST=localhost:9010
+
+# Windows
+set SPANNER_EMULATOR_HOST=localhost:9010
+for MongoDB (experimental)
+
+npm install mongodb@^5.2.0 --save
+
+for NativeScript, react-native and Cordova
+
+Check documentation of supported platforms
+
+Install only one of them, depending on which database you use.
