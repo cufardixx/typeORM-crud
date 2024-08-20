@@ -3,12 +3,17 @@ import { Request, Response } from "express"
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const { firstname, lastname, email, password } = req.body
-    const user = new User()
-    user.firstname = firstname
-    user.lastname = lastname
-    user.email = email
-    user.password = password
+    
+    const { firstname, lastname, email, password } = req.body;
+
+    
+    // Crea una instancia de User y asigna los valores
+    const user = new User();
+    user.firstname = firstname;
+    user.lastname = lastname;
+    user.email = email;
+    user.password = password;
+
 
     await user.save()
 
@@ -62,7 +67,7 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 }
 
-export const deleteUser = async (req: Request, res: Response) => {
+export const delateUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
     const result = await User.delete({ id: parseInt(id) });
