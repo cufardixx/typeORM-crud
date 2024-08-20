@@ -1,18 +1,21 @@
 import { User } from "./user.entity"
 import { Request, Response } from "express"
+import bcrypt from "bcrypt"
 
 export const createUser = async (req: Request, res: Response) => {
   try {
     
     const { firstname, lastname, email, password } = req.body;
 
-    
+    //encriptar password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Crea una instancia de User y asigna los valores
     const user = new User();
     user.firstname = firstname;
     user.lastname = lastname;
     user.email = email;
-    user.password = password;
+    user.password = hashedPassword;
 
 
     await user.save()
@@ -22,6 +25,9 @@ export const createUser = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error })
   }
 }
+
+
+
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
