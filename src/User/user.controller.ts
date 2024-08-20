@@ -88,36 +88,32 @@ export const delateUser = async (req: Request, res: Response) => {
 };
 
 export const loginUser = async (req: Request, res: Response) => {
-  const { email, password} = req.body
+  const { email, password } = req.body;
 
   try {
-    //validar Email
-    const user = await User.findOneBy({ email })
-    if (!user) return res.status(400).json({ message: 'email not found' })
+    // Validar email
+    const user = await User.findOneBy({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Email not found' });
+    }
 
-    //Validar password
-    const passwordValid = await bcrypt.compare(password, user.password);
-
-    if (!passwordValid) {
+    // Validar contraseña
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid password' });
     }
 
-    //recuperar id y rol ademas de dejarlos en el token
-    const idUser = user.id;
-    const rolUser = user.rol;
-
-    //Generar token
+    // Generar token con id y rol
     const token = jwt.sign(
-      { id: idUser, rol: rolUser },
+      { id: user.id, rol: user.rol },
       process.env.SECRET_KEY || 'frasemegasecreta',
-      {
-        expiresIn: 60 * 60,
-      }
+      { expiresIn: '1h' }
     );
-    return res.status(200).json({ token, data: user });
-  } catch (error) {
-    return res.status(500).json({ message: "ERROR" })
-  }
 
-}
+    return res.status(200).json({ token, user: { id: user.id, email: user.email, rol: user.rol } });
+  } catch (error) {
+    console.error('Login error:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
