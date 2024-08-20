@@ -1,15 +1,16 @@
 import { Router } from "express"
-import { createUser, getUsers, updateUser, delateUser, getUser } from "./user.controller"
+import { createUser, getUsers, updateUser, delateUser, getUser, loginUser} from "./user.controller"
 import { schemaValidation } from "../middlewares/schemaValidacion"
-import { createUserSchema, updateUserSchema } from "../schemas/schema.user"
+import { createUserSchema, updateUserSchema ,loginUserSchema} from "../schemas/schema.user"
 
 const router = Router()
 
-router.post("/user", schemaValidation(createUserSchema), createUser)
-router.get("/user", getUsers)
-router.get("/user/:id", getUser)
-router.put("/user/:id", schemaValidation(updateUserSchema), updateUser)
-router.delete("/user/:id", delateUser)
+router.post("/", schemaValidation(createUserSchema), createUser)
+router.get("/", getUsers)
+router.get("/:id", getUser)
+router.put("/:id", schemaValidation(updateUserSchema), updateUser)
+router.delete("/:id", delateUser)
+router.post("/login", schemaValidation(loginUserSchema), loginUser)
 
 
 export default router

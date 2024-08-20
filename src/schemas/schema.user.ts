@@ -16,9 +16,16 @@ export const updateUserSchema = z.object({
         lastname: z.string().min(1, "Lastname is required").optional(),
         email: z.string().email("Invalid email format").optional(),
         password: z.string().min(6, "Password must be at least 6 characters long").optional(),
+        rol: z.string().optional(),
     }),
     params: z.object({
         id: z.string().min(1),
     })
 })
 
+export const loginUserSchema = z.object({
+    body: z.object({
+        email: z.string().email("Invalid email format"),
+        password: z.string().min(6, "Password must be at least 6 characters long"),
+    })
+})

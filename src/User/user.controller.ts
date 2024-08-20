@@ -1,10 +1,11 @@
 import { User } from "./user.entity"
 import { Request, Response } from "express"
 import bcrypt from "bcrypt"
+import jwt from 'jsonwebtoken';
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    
+
     const { firstname, lastname, email, password } = req.body;
 
     //encriptar password
@@ -85,4 +86,38 @@ export const delateUser = async (req: Request, res: Response) => {
     }
   }
 };
+
+export const loginUser = async (req: Request, res: Response) => {
+  const { email, password} = req.body
+
+  try {
+    //validar Email
+    const user = await User.findOneBy({ email })
+    if (!user) return res.status(400).json({ message: 'email not found' })
+
+    //Validar password
+    const passwordValid = await bcrypt.compare(password, user.password);
+
+    if (!passwordValid) {
+      return res.status(401).json({ message: 'Invalid password' });
+    }
+
+    //recuperar id y rol ademas de dejarlos en el token
+    const idUser = user.id;
+    const rolUser = user.rol;
+
+    //Generar token
+    const token = jwt.sign(
+      { id: idUser, rol: rolUser },
+      process.env.SECRET_KEY || 'frasemegasecreta',
+      {
+        expiresIn: 60 * 60,
+      }
+    );
+    return res.status(200).json({ token, data: user });
+  } catch (error) {
+    return res.status(500).json({ message: "ERROR" })
+  }
+
+}
 
