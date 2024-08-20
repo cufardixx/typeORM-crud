@@ -26,9 +26,6 @@ export const createUser = async (req: Request, res: Response) => {
   }
 }
 
-
-
-
 export const getUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find()
@@ -88,3 +85,4 @@ export const delateUser = async (req: Request, res: Response) => {
     }
   }
 };
+

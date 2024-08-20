@@ -1,4 +1,4 @@
-import { log } from "console";
+
 import app from "./app";
 import { AppDataSource } from "./db";
 const PORT: number = 3000
