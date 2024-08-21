@@ -2,6 +2,7 @@ import { User } from "./user.entity"
 import { Request, Response } from "express"
 import bcrypt from "bcrypt"
 import jwt from 'jsonwebtoken';
+import { tokenSing } from "../lib/generateToken"
 
 
 export const signupUser = async (req: Request, res: Response) => {
@@ -112,14 +113,9 @@ export const signinUser = async (req: Request, res: Response) => {
     }
 
     // Generar token con id
-    const token: string = jwt.sign(
-      { id: user.id },
-      process.env.SECRET_KEY || 'frasemegasecreta',
-      { expiresIn: '1h' }
-    );
+    const tokenSession = await tokenSing(user)
 
-    // Enviar el token en el header y opcionalmente información del usuario
-    res.header('auth-token', token).json({ token, userId: user.id, firstname: user.firstname });
+    return res.status(200).json({ "TOKEN:": tokenSession })
 
   } catch (error: any) {
     console.error('Login error:', error);
@@ -134,7 +130,7 @@ export const signinUser = async (req: Request, res: Response) => {
 export const profile = async (req: Request, res: Response) => {
   const user = await User.findOneBy({ id: parseInt(req.params.id) });
   if (!user) {
-      return res.status(404).json('No User found');
+    return res.status(404).json('No User found');
   }
   res.json(user);
 };
