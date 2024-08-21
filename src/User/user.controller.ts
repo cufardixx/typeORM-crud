@@ -3,29 +3,36 @@ import { Request, Response } from "express"
 import bcrypt from "bcrypt"
 import jwt from 'jsonwebtoken';
 
-export const createUser = async (req: Request, res: Response) => {
-  try {
 
+export const signupUser = async (req: Request, res: Response) => {
+  try {
     const { firstname, lastname, email, password } = req.body;
 
-    //encriptar password
+    // Encriptar password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Crea una instancia de User y asigna los valores
     const user = new User();
     user.firstname = firstname;
     user.lastname = lastname;
     user.email = email;
     user.password = hashedPassword;
 
+    await user.save();
 
-    await user.save()
+    // Generar token con el id del usuario
+    const token: string = jwt.sign(
+      { id: user.id },
+      process.env.SECRET_KEY || 'frasemegasecreta',
+      { expiresIn: '1h' }
+    );
 
-    return res.status(201).json(user)
-  } catch (error) {
-    return res.status(500).json({ message: error })
+    // Enviar el token en el header y el usuario en la respuesta
+    res.header('auth-token', token).json(user);
+
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message || 'Internal server error' });
   }
-}
+};
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
@@ -53,7 +60,7 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const { firstname, lastname, email, password } = req.body
+    const { firstname, lastname, email, password, rol } = req.body
     const user = await User.findOneBy({ id: parseInt(req.params.id) })
 
     if (!user) return res.status(404).json({ message: "User does not exist" })
@@ -62,6 +69,7 @@ export const updateUser = async (req: Request, res: Response) => {
     user.lastname = lastname
     user.email = email
     user.password = password
+    user.rol = rol
 
     await user.save()
 
@@ -87,33 +95,46 @@ export const delateUser = async (req: Request, res: Response) => {
   }
 };
 
-export const loginUser = async (req: Request, res: Response) => {
+export const signinUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
     // Validar email
     const user = await User.findOneBy({ email });
     if (!user) {
-      return res.status(400).json({ message: 'Email not found' });
+      return res.status(400).json({ message: 'Invalid email or password' });
     }
 
     // Validar contraseña
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid password' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Generar token con id y rol
-    const token = jwt.sign(
-      { id: user.id, rol: user.rol },
+    // Generar token con id
+    const token: string = jwt.sign(
+      { id: user.id },
       process.env.SECRET_KEY || 'frasemegasecreta',
       { expiresIn: '1h' }
     );
 
-    return res.status(200).json({ token, user: { id: user.id, email: user.email, rol: user.rol } });
-  } catch (error) {
+    // Enviar el token en el header y opcionalmente información del usuario
+    res.header('auth-token', token).json({ token, userId: user.id, firstname: user.firstname });
+
+  } catch (error: any) {
     console.error('Login error:', error);
-    return res.status(500).json({ message: 'Internal Server Error' });
+    return res.status(500).json({ message: error.message || 'Internal Server Error' });
   }
 };
 
+
+
+
+
+export const profile = async (req: Request, res: Response) => {
+  const user = await User.findOneBy({ id: parseInt(req.params.id) });
+  if (!user) {
+      return res.status(404).json('No User found');
+  }
+  res.json(user);
+};
