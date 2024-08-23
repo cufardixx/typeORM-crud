@@ -20,7 +20,7 @@ export class User extends BaseEntity{
     password: string;
 
     @Column({
-        default: "cliente"
+        default: "user"
     })
     rol: string;
 

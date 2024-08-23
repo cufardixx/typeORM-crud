@@ -9,13 +9,13 @@ const router = Router()
 
 router.post("/login", schemaValidation(signinUserSchema), signinUser)
 router.post("/register", schemaValidation(signupUserSchema), signupUser)
-//router.get("/", getUsers)
-//router.get("/:id", getUser)
+router.get("/e", getUsers)
+router.get("/:id", getUser)
 router.put("/:id", schemaValidation(updateUserSchema), updateUser)
 router.delete("/:id", delateUser)
 
 //ruta protegida 
-router.get("/", checkAuthToken, checkRoleAuth(["admin"]), getUsers)
+router.get("/", checkAuthToken, checkRoleAuth(["user"]), profile)
 
 
 

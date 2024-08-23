@@ -3,6 +3,7 @@ import { Request, Response } from "express"
 import bcrypt from "bcrypt"
 import jwt from 'jsonwebtoken';
 import { tokenSing } from "../lib/generateToken"
+import { CustomRequest } from "../middlewares/authToken";
 
 
 export const signupUser = async (req: Request, res: Response) => {
@@ -28,7 +29,7 @@ export const signupUser = async (req: Request, res: Response) => {
     );
 
     // Enviar el token en el header y el usuario en la respuesta
-    res.header('auth-token', token).json(user);
+    res.header('token', token).json(user);
 
   } catch (error: any) {
     return res.status(500).json({ message: error.message || 'Internal server error' });
@@ -127,10 +128,23 @@ export const signinUser = async (req: Request, res: Response) => {
 
 
 
-export const profile = async (req: Request, res: Response) => {
-  const user = await User.findOneBy({ id: parseInt(req.params.id) });
-  if (!user) {
-    return res.status(404).json('No User found');
+export const profile = async (req: CustomRequest, res: Response) => {
+  try {
+    const id = req.user!.id
+    console.log(id);
+    
+    const user = await User.findOneBy({ id: id });
+    if (!user) return res.status(404).json('No User found');
+
+
+    return res.json({
+      id: user.id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: 'Internal server error' });
   }
-  res.json(user);
+
 };

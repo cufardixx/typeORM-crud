@@ -9,22 +9,30 @@ export interface IPayload {
 // Extender la interfaz Request para incluir la propiedad id
 export interface CustomRequest extends Request {
     id?: number;
+    user?: IPayload
 }
 
 export const checkAuthToken = async (req: CustomRequest, res: Response, next: NextFunction) => {
     try {
-        const token: any = req.header("token")
-        const tokenData = await verifyToken(token) as IPayload
-        console.log(tokenData);
+        const token: any = req.header("token");
 
-        if (tokenData.id) {
-            next()
-        } else {
-            res.status(409)
-            res.send({ error: "you don't have credentials" })
+        if (!token) {
+            return res.status(401).json({ message: 'No token provided' });
         }
 
+        const tokenData = await verifyToken(token) as IPayload;
+        console.log(tokenData);
+
+        
+        if (!tokenData || !tokenData.id) {
+            return res.status(401).json({ message: 'Invalid token data' });
+        }
+
+        req.user = tokenData;  
+        next();
+
     } catch (error) {
-        res.status(500).json({ message: 'error credentials' });
+        console.error(error); 
+        res.status(500).json({ message: 'Error credentials' });
     }
-}
+};
