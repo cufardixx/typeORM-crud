@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { signupUser, getUsers, updateUser, delateUser, getUser, signinUser, profile } from "./user.controller"
+import { signupUser, getUsers, updateUser, delateUser, getUser, signinUser, profile } from "../User/user.controller"
 import { schemaValidation } from "../middlewares/schemaValidacion"
 import { signupUserSchema, updateUserSchema, signinUserSchema } from "../schemas/schema.user"
 import { checkAuthToken } from "../middlewares/authToken"
