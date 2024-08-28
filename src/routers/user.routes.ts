@@ -9,7 +9,7 @@ const router = Router()
 
 router.post("/login", schemaValidation(signinUserSchema), signinUser)
 router.post("/register", schemaValidation(signupUserSchema), signupUser)
-router.get("/e", getUsers)
+router.get("/p", getUsers)
 router.get("/:id", getUser)
 router.put("/:id", schemaValidation(updateUserSchema), updateUser)
 router.delete("/:id", delateUser)
